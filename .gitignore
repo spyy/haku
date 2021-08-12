@@ -103,5 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
-config/rows.json
-config/columns.json
+# configurations
+config/
+
