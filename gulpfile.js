@@ -79,11 +79,11 @@ function find2(cb) {
 function getRandomInt() {
   const res = Math.floor(Math.random() * config.maxRandom);
 
-  return res ? res : 4;
+  return res < config.minRandom ? config.minRandom : res;
 }
 
 function wait() { 
-  const delay = getRandomInt() * 2000;
+  const delay = getRandomInt() * 1000;
 
   return new Promise((resolve, reject) => {
     setTimeout(() => resolve(), delay);
@@ -153,4 +153,5 @@ exports.yleiset4 = series(initColumn4, find, wait, find, wait, find, wait, find,
 exports.yleiset5 = series(initColumn5, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
 exports.yleiset6 = series(initColumn6, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
 exports.yleiset9 = series(initColumn1, find, result);
+exports.test = series(find2, wait, find2, wait, find2, wait, find2, wait, find2, wait, find2, wait, find2, wait, find2);
 exports.default = series(result);
