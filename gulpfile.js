@@ -12,6 +12,7 @@ let searchAddress = '';
 let searchArray = [];
 let searchIndex = 0;
 let findings = [];
+let failures = [];
 
 
 function generateQuery() {
@@ -25,10 +26,22 @@ function generateQuery() {
   return qstring.replace(/%20/g, '+');
 }
 
-function parseResponse(chunk) {
-  const obj = JSON.parse(chunk);
+function parseJson(chunk) {
+  try {
+    const obj = JSON.parse(chunk);
+    
+    return obj;
+  } catch (e) {
+    failures.push(searchArray[searchIndex]);
+  }
 
-  if (Array.isArray(obj.results) && obj.results.length) {
+  return null;
+}
+
+function parseResponse(chunk) {
+  const obj = parseJson(chunk);
+
+  if (obj && Array.isArray(obj.results) && obj.results.length) {
     const result = obj.results[0];
 
     if (result.totalResultCount) {
@@ -91,7 +104,8 @@ function wait() {
 }
 
 function result(cb) {
-  console.log(findings);
+  console.log('findings: ' + findings);
+  console.log('failures: ' + failures);
 
   cb();
 }
@@ -111,6 +125,7 @@ function initColumn(cb, col) {
 
   if (searchAddress) {
     findings = [];
+    failures = [];
     searchArray = columns[col],
     searchIndex = 0;
 
