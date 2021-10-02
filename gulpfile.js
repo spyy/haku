@@ -61,6 +61,7 @@ function find() {
       if (res.statusCode == 200) {  
         console.log(address);        
       } else {
+        console.log(searchArray);
         reject('statuCode: ' + res.statusCode);
       }
 
@@ -107,6 +108,12 @@ function result(cb) {
   console.log('findings: ' + findings);
   console.log('failures: ' + failures);
 
+  cb();
+}
+
+function showYleiset(cb) {
+  console.log(columns);
+  
   cb();
 }
 
@@ -168,5 +175,5 @@ exports.yleiset4 = series(initColumn4, find, wait, find, wait, find, wait, find,
 exports.yleiset5 = series(initColumn5, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
 exports.yleiset6 = series(initColumn6, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
 exports.yleiset9 = series(initColumn1, find, result);
-exports.test = series(find2, wait, find2, wait, find2, wait, find2, wait, find2, wait, find2, wait, find2, wait, find2);
+exports.yleiset = series(showYleiset);
 exports.default = series(result);
