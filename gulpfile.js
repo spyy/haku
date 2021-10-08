@@ -1,11 +1,12 @@
 const { series } = require('gulp');
 const config = require('./config/conf.json');
-const columns = require('./config/columns.json');
+const columns = require('./config/rows.json');
+
 
 const querystring = require('querystring');
 const process = require('process');
 const https = require('https');
-const http = require('http');
+
 
 
 let searchAddress = '';
@@ -16,7 +17,7 @@ let failures = [];
 
 
 function generateQuery() {
-  const text = searchArray[searchIndex] + '* ' + searchAddress;
+  const text = searchArray[searchIndex] + ' ' + searchAddress;
 
   const qstring = querystring.stringify({
     text: text,
@@ -166,14 +167,28 @@ function initColumn6(cb) {
   initColumn(cb, '6');
 }
 
+function initColumn7(cb) {
+  initColumn(cb, '7');
+}
+
+function initColumn8(cb) {
+  initColumn(cb, '8');
+}
+
+function initColumn9(cb) {
+  initColumn(cb, '9');
+}
 
 
-exports.yleiset1 = series(initColumn1, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset2 = series(initColumn2, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset3 = series(initColumn3, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset4 = series(initColumn4, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset5 = series(initColumn5, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset6 = series(initColumn6, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset9 = series(initColumn1, find, result);
+
+exports.yleiset1 = series(initColumn1, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset2 = series(initColumn2, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset3 = series(initColumn3, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset4 = series(initColumn4, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset5 = series(initColumn5, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset6 = series(initColumn6, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset7 = series(initColumn7, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset8 = series(initColumn8, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
+exports.yleiset9 = series(initColumn9, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
 exports.yleiset = series(showYleiset);
 exports.default = series(result);
