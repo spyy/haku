@@ -1,7 +1,7 @@
-const { series } = require('gulp');
+const gulp = require('gulp');
 const config = require('./config/conf.json');
-const columns = require('./config/rows.json');
-
+const sukunimet = require('./config/sukunimitilasto-2022-02-07-dvv.json');
+const miehet = require('./config/etunimitilasto-2022-02-07-dvv.miehet.json');
 
 const querystring = require('querystring');
 const process = require('process');
@@ -9,22 +9,65 @@ const https = require('https');
 
 
 
-let searchAddress = '';
-let searchArray = [];
-let searchIndex = 0;
-let findings = [];
-let failures = [];
+function findArgument(arg) {
+  let index = process.argv.findIndex(element => element == arg);
+  
+  if (index > 0) {
+    index++;
+  }
+  
+  return process.argv[index] ? process.argv[index] : ''; 
+}
+
+
+const letter = findArgument('--letter');
+const location = findArgument('--location');
+
+
+
+let mensNames = [];
+let firstNameIndex = 0;
+
+const filter = item => {
+  let re = new RegExp('^' + letter, 'i');
+  const count = Number.parseInt(item.count);
+
+  if (count < config.minCount) {      
+    return false;
+  } else {
+    return item.name.match(re) ? true : false;
+  }
+}
+
+//filteredLastnames = sukunimet.filter(item => filter(item));
+
+if (letter) {
+  const filteredLastnames = sukunimet.filter(item => filter(item));
+  const filteredMenNames = miehet.filter(item => filter(item));
+
+  let lastNames = filteredLastnames.map(element => element.name);
+  let names = filteredMenNames.map(element => element.name);
+
+  lastNames.sort().forEach(lastName => {
+    names.sort().forEach(firstName => {
+      mensNames.push(lastName + ' ' + firstName);
+    });
+  });
+
+
+  /*
+  lastNames.forEach(element => {
+    gulp.task(element, gulp.series(doTask, wait));
+  });
+  */
+}
 
 
 function generateQuery() {
-  const text = searchArray[searchIndex] + ' ' + searchAddress;
+  const what = 'what=' + lastNames[lastNameIndex] + '%20' + firstNames[firstNameIndex];
+  let uri = config.address.replace('what', what);
 
-  const qstring = querystring.stringify({
-    text: text,
-    _: Date.now()
-  });
-
-  return qstring.replace(/%20/g, '+');
+  return uri;
 }
 
 function parseJson(chunk) {
@@ -55,6 +98,8 @@ function parseResponse(chunk) {
 function find() {
   const address = config.address + generateQuery();
 
+  //console.log(address);
+
   return new Promise((resolve, reject) => {
     const req = https.request(address, function(res) {      
       res.setEncoding('utf8');
@@ -81,12 +126,10 @@ function find() {
   });
 }
 
-function find2(cb) {
-  const address = config.address + generateQuery();
+function doTask(cb) {
+  console.log(generateQuery());
 
-  console.log(address);
-
-  searchIndex++;
+  lastNameIndex++;
 
   cb();
 }
@@ -106,89 +149,50 @@ function wait() {
 }
 
 function result(cb) {
-  console.log('findings: ' + findings);
-  console.log('failures: ' + failures);
+  console.log(lastNames);
+
+  console.log(lastNames.length);
 
   cb();
 }
 
-function showYleiset(cb) {
-  console.log(columns);
-  
+function showLastnames(cb) {
+  console.log('Sukunimet: ' + lastNames.length);
+
+  console.log(lastNames);
+
   cb();
 }
 
-function findArgument(arg) {
-  let index = process.argv.findIndex(element => element == arg);
-  
-  if (index > 0) {
-    index++;
-  }
-  
-  return process.argv[index] ? process.argv[index] : ''; 
+function showNames(cb) {
+  console.log('Miesten nimet: ' + lastNames.length);
+
+  console.log(lastNames);
+
+  cb();
 }
 
-function initColumn(cb, col) {
-  searchAddress = findArgument('--address');
+function showMensNames(cb) {
+  console.log('Miesten nimet: ' + mensNames.length);
 
-  if (searchAddress) {
-    findings = [];
-    failures = [];
-    searchArray = columns[col],
-    searchIndex = 0;
+  console.log(mensNames);
 
+  cb();
+}
+
+function init(cb) {
+  if (letter && location) {
     cb();
   } else {
-    cb(new Error('address not found'));
+    cb(new Error('parameter missing'));
   }
 }
 
-function initColumn1(cb) {
-  initColumn(cb, '1');
-}
 
-function initColumn2(cb) {
-  initColumn(cb, '2');
-}
+//exports.kirjain = gulp.series(init, lastNames, result);
 
-function initColumn3(cb) {
-  initColumn(cb, '3');
-}
+exports.sukunimet = gulp.series(showLastnames);
 
-function initColumn4(cb) {
-  initColumn(cb, '4');
-}
+exports.miehet = gulp.series(showMensNames);
 
-function initColumn5(cb) {
-  initColumn(cb, '5');
-}
-
-function initColumn6(cb) {
-  initColumn(cb, '6');
-}
-
-function initColumn7(cb) {
-  initColumn(cb, '7');
-}
-
-function initColumn8(cb) {
-  initColumn(cb, '8');
-}
-
-function initColumn9(cb) {
-  initColumn(cb, '9');
-}
-
-
-
-exports.yleiset1 = series(initColumn1, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset2 = series(initColumn2, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset3 = series(initColumn3, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset4 = series(initColumn4, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset5 = series(initColumn5, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset6 = series(initColumn6, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset7 = series(initColumn7, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset8 = series(initColumn8, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset9 = series(initColumn9, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, wait, find, result);
-exports.yleiset = series(showYleiset);
-exports.default = series(result);
+exports.default = gulp.series(init, result);
