@@ -24,43 +24,41 @@ const letter = findArgument('--letter');
 const location = findArgument('--location');
 
 
-
-let mensNames = [];
-let firstNameIndex = 0;
-
-const filter = item => {
-  let re = new RegExp('^' + letter, 'i');
+const filterLetter = (item, l, min) => {
+  let re = new RegExp('^' + l, 'i');
   const count = Number.parseInt(item.count);
 
-  if (count < config.minCount) {      
+  if (count < min) {      
     return false;
   } else {
     return item.name.match(re) ? true : false;
   }
 }
 
-//filteredLastnames = sukunimet.filter(item => filter(item));
+const filterMinimum = (item, min) => {
+  const count = Number.parseInt(item.count);
+
+  return count < min ? false : true;
+}
+
+
+const filteredLastNames = sukunimet.filter(item => filterMinimum(item, config.minCount));
+const filteredFirstNames = miehet.filter(item => filterMinimum(item, config.minCount));
+let letteredLastNames = [];
 
 if (letter) {
-  const filteredLastnames = sukunimet.filter(item => filter(item));
-  const filteredMenNames = miehet.filter(item => filter(item));
-
-  let lastNames = filteredLastnames.map(element => element.name);
-  let names = filteredMenNames.map(element => element.name);
-
-  lastNames.sort().forEach(lastName => {
-    names.sort().forEach(firstName => {
-      mensNames.push(lastName + ' ' + firstName);
-    });
-  });
-
-
-  /*
-  lastNames.forEach(element => {
-    gulp.task(element, gulp.series(doTask, wait));
-  });
-  */
+  letteredLastNames = filteredLastNames.filter(item => filterLetter(item));
 }
+
+let lastNames = letteredLastNames.map(element => element.name);
+let firstNames = filteredFirstNames.map(element => element.name);
+let names = [];
+
+lastNames.sort().forEach(lastName => {
+  firstNames.sort().forEach(firstName => {
+    names.push(lastName + ' ' + firstName);
+  });
+});
 
 
 function generateQuery() {
@@ -157,9 +155,7 @@ function result(cb) {
 }
 
 function showLastnames(cb) {
-  console.log('Sukunimet: ' + lastNames.length);
-
-  console.log(lastNames);
+  console.log(JSON.stringify(filteredLastNames));
 
   cb();
 }
@@ -173,9 +169,7 @@ function showNames(cb) {
 }
 
 function showMensNames(cb) {
-  console.log('Miesten nimet: ' + mensNames.length);
-
-  console.log(mensNames);
+  console.log(JSON.stringify(filteredFirstNames));
 
   cb();
 }
